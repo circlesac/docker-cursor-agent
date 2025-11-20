@@ -1,0 +1,14 @@
+# Directories
+.github
+.git
+node_modules
+scripts
+tests
+
+# Files
+*.md
+.gitignore
+bun.lock
+package.json
+tsconfig.json
+vitest.config.ts
