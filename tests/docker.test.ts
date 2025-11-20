@@ -101,8 +101,7 @@ describe("Docker Cursor Agent", () => {
 				try {
 					const parsed = JSON.parse(line.trim())
 					jsonObjects.push(parsed)
-				} catch {
-				}
+				} catch {}
 			}
 
 			if (jsonObjects.length === 0) {

@@ -35,7 +35,51 @@ docker pull ghcr.io/circlesac/docker-cursor-agent:latest
 
 ## Usage
 
-### Basic Usage
+### MCP Config Generator CLI
+
+This package includes a CLI tool to generate cursor-agent MCP configuration files from an `mcp.json` file.
+
+#### Installation
+
+```bash
+# Install globally
+npm install -g docker-cursor-agent
+
+# Or use with npx (no installation needed)
+npx docker-cursor-agent --file <mcp.json> --out <output-dir>
+```
+
+#### Usage
+
+```bash
+# Generate MCP config from mcp.json
+npx docker-cursor-agent --file ./mcp.json --out ./build
+
+# This creates:
+# ./build/.cursor/mcp.json
+# ./build/.cursor/projects/workspace/mcp-approvals.json
+```
+
+#### Options
+
+- `--file, -f` - Path to input `mcp.json` file (required)
+- `--out, -o` - Output directory where `.cursor` folder will be created (required, defaults to current directory)
+
+#### Example with Docker
+
+After generating the config files, use them with the Docker container:
+
+```bash
+docker run --rm \
+  -e CURSOR_API_KEY=your_key \
+  -v $(pwd)/build/.cursor:/root/.cursor \
+  ghcr.io/circlesac/docker-cursor-agent:latest \
+  --print --output-format stream-json "your prompt"
+```
+
+### Docker Container Usage
+
+#### Basic Usage
 
 Run `cursor-agent` commands through Docker:
 
@@ -48,7 +92,7 @@ docker run --rm -e CURSOR_API_KEY=your_key ghcr.io/circlesac/docker-cursor-agent
 docker run --rm -e CURSOR_API_KEY=your_key docker-cursor-agent --version
 ```
 
-### Passing Arguments
+#### Passing Arguments
 
 All arguments are passed through to `cursor-agent`:
 
@@ -60,7 +104,7 @@ docker run --rm -e CURSOR_API_KEY=your_key ghcr.io/circlesac/docker-cursor-agent
 docker run --rm -e CURSOR_API_KEY=your_key docker-cursor-agent <your-args>
 ```
 
-### Environment Variables
+#### Environment Variables
 
 - `CURSOR_API_KEY` - Required for cursor-agent to function (pass via `-e` flag)
 
@@ -75,10 +119,14 @@ bun install
 ### Build
 
 ```bash
+# Build TypeScript source code
 bun run build
+
+# Build Docker image
+bun run build:docker
 ```
 
-Builds the Docker image locally.
+The `build` script compiles TypeScript source to JavaScript in the `dist/` directory. The `build:docker` script builds the Docker image locally.
 
 ### Run Tests
 
@@ -151,10 +199,15 @@ docker-cursor-agent/
 ├── Dockerfile            # Debian-based container definition
 ├── package.json          # Bun project configuration
 ├── README.md             # This file
+├── src/
+│   ├── cli.ts            # CLI entry point
+│   └── utils.ts          # MCP config processing utilities
 ├── scripts/
-│   └── deploy.ts         # Deployment script to GHCR
+│   └── deploy.ts          # Deployment script to GHCR
 ├── tests/
-│   └── docker.test.ts    # Vitest tests
-├── tsconfig.json        # TypeScript configuration
-└── vitest.config.ts     # Vitest configuration
+│   ├── cli.test.ts       # CLI tests
+│   └── docker.test.ts    # Docker tests
+├── tsconfig.json         # TypeScript configuration (base)
+├── tsconfig.build.json   # TypeScript build configuration
+└── vitest.config.ts      # Vitest configuration
 ```
