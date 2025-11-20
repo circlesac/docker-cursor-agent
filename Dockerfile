@@ -6,15 +6,19 @@ FROM debian:stable-slim
 # pre-compiled Node.js binary. Debian provides the necessary glibc (libc.so.6) and C++ standard
 # library (libstdc++.so.6), ensuring the bundled Node.js binary runs correctly.
 
-# Install dependencies and Cursor CLI, then clean up to minimize size
+# Install dependencies, Node.js, Bun, and Cursor CLI, then clean up to minimize size
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends curl ca-certificates && \
+    apt-get install -y --no-install-recommends curl ca-certificates unzip && \
+    curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && \
+    apt-get install -y --no-install-recommends nodejs && \
+    curl -fsSL https://bun.sh/install | bash && \
     curl https://cursor.com/install -fsS | bash && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* /usr/share/man/*
 
-# Add ~/.local/bin to PATH
-ENV PATH="/root/.local/bin:${PATH}"
+# Add Bun and ~/.local/bin to PATH
+# Node.js, npm, and npx are already in /usr/bin (installed via apt)
+ENV PATH="/root/.bun/bin:/usr/local/bin:/root/.local/bin:${PATH}"
 
 # Set cursor-agent as entrypoint to pass args through
 ENTRYPOINT ["cursor-agent"]
