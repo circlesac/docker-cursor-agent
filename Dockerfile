@@ -20,6 +20,9 @@ RUN apt-get update && \
 # Node.js, npm, and npx are already in /usr/bin (installed via apt)
 ENV PATH="/root/.bun/bin:/usr/local/bin:/root/.local/bin:${PATH}"
 
+# Set working directory to avoid running from root
+WORKDIR /workspace
+
 # Set cursor-agent as entrypoint to pass args through
 ENTRYPOINT ["cursor-agent"]
 
