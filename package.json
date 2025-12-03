@@ -8,7 +8,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "bunx rimraf dist && bunx tsc --project tsconfig.build.json",
+    "build": "bunx rimraf dist && npx -p @typescript/native-preview tsgo --project tsconfig.build.json",
     "build:docker": "docker build -t docker-cursor-agent .",
     "prepublishOnly": "bun run build",
     "test": "bunx vitest run --coverage",
